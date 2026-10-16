@@ -1,0 +1,101 @@
+### CMD: ffmpeg -version
+ffmpeg version 6.1.1-3ubuntu5 Copyright (c) 2000-2023 the FFmpeg developers
+built with gcc 13 (Ubuntu 13.2.0-23ubuntu3)
+configuration: --prefix=/usr --extra-version=3ubuntu5 --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --arch=amd64 --enable-gpl --disable-stripping --disable-omx --enable-gnutls --enable-libaom --enable-libass --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libcodec2 --enable-libdav1d --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libglslang --enable-libgme --enable-libgsm --enable-libharfbuzz --enable-libmp3lame --enable-libmysofa --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libtheora --enable-libtwolame --enable-libvidstab --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx265 --enable-libxml2 --enable-libxvid --enable-libzimg --enable-openal --enable-opencl --enable-opengl --disable-sndio --enable-libvpl --disable-libmfx --enable-libdc1394 --enable-libdrm --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-ladspa --enable-libbluray --enable-libjack --enable-libpulse --enable-librabbitmq --enable-librist --enable-libsrt --enable-libssh --enable-libsvtav1 --enable-libx264 --enable-libzmq --enable-libzvbi --enable-lv2 --enable-sdl2 --enable-libplacebo --enable-librav1e --enable-pocketsphinx --enable-librsvg --enable-libjxl --enable-shared
+libavutil      58. 29.100 / 58. 29.100
+libavcodec     60. 31.102 / 60. 31.102
+libavformat    60. 16.100 / 60. 16.100
+libavdevice    60.  3.100 / 60.  3.100
+libavfilter     9. 12.100 /  9. 12.100
+libswscale      7.  5.100 /  7.  5.100
+libswresample   4. 12.100 /  4. 12.100
+libpostproc    57.  3.100 / 57.  3.100
+### EXIT: 0
+
+### CMD: python setup37.py
+Created new empty sample folder.
+### EXIT: 0
+
+### CMD: python setup37.py
+Stopped: sample already exists. Nothing was replaced or deleted.
+### EXIT: 1
+
+### CMD: ffmpeg -n -hide_banner -nostats -v error -f lavfi -i testsrc=duration=3:size=640x360:rate=24 -f lavfi -i sine=frequency=1000:duration=3 -map 0:v:0 -map 1:a:0 -c:v libx264 -threads 1 -crf 18 -pix_fmt yuv420p -c:a aac -b:a 64k -shortest sample/input.mp4
+### EXIT: 0
+
+### CMD: python check37.py snapshot
+Saved input digest in a new input.sha256 file; existing manifests are refused.
+### EXIT: 0
+
+### CMD: ffmpeg -n -hide_banner -nostats -v error -i sample/input.mp4 -map 0:v:0 -map 0:a:0 -c:v libx264 -threads 1 -crf 28 -pix_fmt yuv420p -c:a aac -b:a 64k sample/small.mp4
+### EXIT: 0
+
+### CMD: ffprobe -v error -show_entries stream=codec_type,codec_name,pix_fmt:format=duration,size -of json sample/small.mp4
+{
+    "programs": [
+
+    ],
+    "streams": [
+        {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "pix_fmt": "yuv420p"
+        },
+        {
+            "codec_name": "aac",
+            "codec_type": "audio"
+        }
+    ],
+    "format": {
+        "duration": "3.018005",
+        "size": "45217"
+    }
+}
+### EXIT: 0
+
+### CMD: python check37.py verify
+PASS: source SHA256 unchanged; H.264/yuv420p and AAC present; fixture duration near 3 seconds.
+PASS: output smaller for this fixture; both streams decoded; decoded tone RMS exceeds 100.
+These checks do not prove audio meaning, visual quality or playback on a phone. Watch and listen before sharing.
+### EXIT: 0
+
+### CMD: ffmpeg -n -hide_banner -nostats -v error -i sample/input.mp4 -map 0:v:0 -map 0:a:0 -c:v libx264 -threads 1 -crf 28 -pix_fmt yuv420p -c:a aac -b:a 64k sample/small.mp4
+File 'sample/small.mp4' already exists. Exiting.
+Error opening output file sample/small.mp4.
+### EXIT: 0
+
+### CMD: python check37.py verify
+PASS: source SHA256 unchanged; H.264/yuv420p and AAC present; fixture duration near 3 seconds.
+PASS: output smaller for this fixture; both streams decoded; decoded tone RMS exceeds 100.
+These checks do not prove audio meaning, visual quality or playback on a phone. Watch and listen before sharing.
+### EXIT: 0
+
+### CMD: ffmpeg -n -hide_banner -nostats -v error -i sample/input.mp4 -vn -c:a copy sample/audio.aac
+### EXIT: 0
+
+### CMD: python -c "from pathlib import Path; [print(p.name, p.stat().st_size) for p in sorted(Path('sample').iterdir())]"
+audio.aac 25309
+input.mp4 56189
+input.sha256 65
+small.mp4 45217
+### EXIT: 0
+
+### CMD: python -m unittest -v
+test_audio_extraction_has_no_video (test_lesson37.FixtureTests.test_audio_extraction_has_no_video) ... ok
+test_audio_extraction_refuses_existing_output (test_lesson37.FixtureTests.test_audio_extraction_refuses_existing_output) ... ok
+test_changed_input_digest_is_detected (test_lesson37.FixtureTests.test_changed_input_digest_is_detected) ... ok
+test_empty_existing_output_preserved (test_lesson37.FixtureTests.test_empty_existing_output_preserved) ... ok
+test_existing_file_preserved (test_lesson37.FixtureTests.test_existing_file_preserved) ... ok
+test_existing_folder_preserves_nested_data (test_lesson37.FixtureTests.test_existing_folder_preserves_nested_data) ... ok
+test_existing_output_preserved (test_lesson37.FixtureTests.test_existing_output_preserved) ... ok
+test_fixture_checks (test_lesson37.FixtureTests.test_fixture_checks) ... ok
+test_missing_input_is_failure (test_lesson37.FixtureTests.test_missing_input_is_failure) ... ok
+test_new_setup (test_lesson37.FixtureTests.test_new_setup) ... ok
+test_reencode_preserves_input_bytes_and_mtime (test_lesson37.FixtureTests.test_reencode_preserves_input_bytes_and_mtime) ... ok
+test_snapshot_refuses_existing_manifest (test_lesson37.FixtureTests.test_snapshot_refuses_existing_manifest) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 1.529s
+
+OK
+### EXIT: 0
