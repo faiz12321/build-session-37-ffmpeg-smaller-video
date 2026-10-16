@@ -1,18 +1,11 @@
 # Make a smaller generated video and check it
 
-A recorded lesson, not a live terminal. Use only a new empty lesson folder and the generated 3-second test card and tone. Python 3, ffmpeg and ffprobe with libx264/AAC are prerequisites. No installation or phone playback is tested by the lesson.
+Save setup37.py,check37.py,test_lesson37.py in a NEW empty lesson folder. Python3,ffmpeg/ffprobe with libx264/AAC are prerequisites. Use only the generated3second test card and tone.
 
-The visible lesson provides setup37.py, check37.py, test_lesson37.py and every command. Setup refuses existing paths. Every ffmpeg output uses -n to refuse replacement; snapshot creates its digest manifest exclusively. Do not use -y, delete old data to force a retry, or use a source file as output. New outputs can remain partial after an error.
-
-Checks cover the input SHA256, expected H.264/yuv420p and AAC streams, near-three-second duration, this fixture getting smaller, full decoding and enough nonzero tone samples. A stream codec alone does not prove good sound. Checks do not judge audio meaning, sync, visual quality or phone playback. Watch and listen on the receiving device before sharing. No size-saving percentage is promised for other footage. Only the selected first video/audio streams are carried over; other tracks/subtitles are outside the lesson.
-
-Run ordinary Python, not python -O: check37.py uses assertions. Reports can disclose paths and errors; keep private output private. Source-file links and concurrent filesystem changes are not comprehensively tested. Keep originals.
-
-## Evidence
-
-12 small temporary-fixture tests cover setup collisions, input bytes/mtime, refused existing and empty outputs, audio extraction, a missing input, source digest changes, and decode/nonzero-tone checks. They are not a general safety or media-quality proof. Two Windows and two Ubuntu full replays pass all 12 tests. Within each platform visible command output matches except unittest time. Windows raw run 1 also includes dependency-install output before the visible commands. Full raw transcripts retain it; the page does not claim installation is a lesson step. Windows recorded FFmpeg 9.0.2. Exact encoded sizes vary by build. Local decoded source/output frames at 0, 1 and 2 seconds were inspected; no phone playback was tested.
-
-The recorder creates a unique temporary folder, writes the exact visible source files and runs the exact visible command argument lists. It removes only its own recording folder afterward. Full outputs and return codes are preserved, including expected refusals. Some Windows builds report exit 0 on a refused output, so the recorder checks refusal text and unchanged output bytes/mtime rather than assuming a nonzero return. Decoder error text is checked as well as the return code. Build/version differences can change encoded bytes and sizes.
+Two Windows and two Ubuntu full replays run exact visible source versions. Final 28 small fixture tests pass (Unix pipe skips on Windows); symlink creation can skip where unavailable. Displayed stdout is first Windows output, not normalized or mixed. Visible-command pair differences are unittest time. Full raw transcripts retain runner dependency-install output before visible commands where present; installation is not a recorded lesson step.
+Only link/error changes: refuse fixture input/ancestor symbolic links/reparse points, hardlinks, special files and traversal before hashing, probing and decoding. Manifest creation checks its parent and refuses every existing manifest, including dangling links. Setup refuses linked parents/traversal and existing sample paths, without reset/deletion. CLI read/metadata/subprocess/fixture errors now print a brief message and exit 2 instead of an uncaught traceback; checks still raise errors when called by tests.
+Original SHA256, codecs/pixel format, duration, fixture size comparison, decoding and nonzero-tone checks are unchanged. Direct ffmpeg/ffprobe commands are NOT wrapped by these Python guards and can still follow links. Use only the NEW generated sample folder and ordinary files, not links or personal footage. Every ffmpeg output still uses -n; overwrite refusal is checked by text plus unchanged bytes/mtime because some Windows builds return 0 on refusal.
+No atomic snapshot, hostile-race defense, resource limit, visual-quality judgment, audio-meaning/sync judgment or phone-playback proof. Stop editors/sync. Keep private paths/errors private. Partial NEW outputs can remain after errors; they are not deleted. Assertions require normal Python, not python -O. Small fictional fixtures are not proof on every filesystem. No phone/desktop recording. Recorder removes only its own temporary fixture folder. Decisions/feedback are teaching text, not recorded output.
 
 ## Sources and licenses
 
@@ -22,3 +15,9 @@ The recorder creates a unique temporary folder, writes the exact visible source 
 - FFmpeg licenses: https://ffmpeg.org/legal.html
 
 This lesson's source code is MIT licensed (LICENSE). FFmpeg, libx264 and other codec libraries have separate licenses. FFmpeg builds can be LGPL or GPL depending on build options; libx264-enabled FFmpeg builds use GPL terms. No FFmpeg executable or codec library is included here. Generated test footage is not personal footage. No real-world videos, phones or desktop applications were tested.
+
+
+Reference: https://docs.python.org/3/library/os.html
+
+Windows paired run: https://github.com/faiz12321/lesson-lab/actions/runs/38979587913
+Ubuntu paired run: https://github.com/faiz12321/lesson-lab/actions/runs/38979880837
