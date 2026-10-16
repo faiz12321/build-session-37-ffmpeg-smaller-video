@@ -23,5 +23,6 @@ jobs:
             choco install ffmpeg -y --no-progress
             if ($LASTEXITCODE -ne 0) { throw 'ffmpeg install failed' }
           }
+          'C:\ProgramData\chocolatey\bin' | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
       - run: python -m unittest -v
       - run: python record37-driver.py
